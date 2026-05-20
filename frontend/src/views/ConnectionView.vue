@@ -1,11 +1,12 @@
 <template>
   <div class="page-header">
     <h2>连接管理</h2>
+    <el-button type="primary" size="small" @click="showAddForm">添加连接</el-button>
   </div>
 
-  <el-card class="section-card">
+  <el-card v-if="formVisible" class="section-card">
     <template #header>
-      <span>新建连接</span>
+      <span>{{ editingId ? '修改连接' : '新建连接' }}</span>
     </template>
     <el-form :model="form" label-width="120px" size="default">
       <el-form-item label="名称">
@@ -44,8 +45,14 @@
       </template>
 
       <el-form-item>
-        <el-button type="primary" @click="saveAndConnect">保存并连接</el-button>
-        <el-button @click="saveOnly">仅保存</el-button>
+        <template v-if="editingId">
+          <el-button type="primary" @click="saveOnly">保存</el-button>
+          <el-button @click="resetForm">取消</el-button>
+        </template>
+        <template v-else>
+          <el-button type="primary" @click="saveAndConnect">保存并连接</el-button>
+          <el-button @click="saveOnly">仅保存</el-button>
+        </template>
       </el-form-item>
     </el-form>
   </el-card>
@@ -114,6 +121,24 @@ const form = reactive({
 
 const stdioArgsText = ref('')
 const httpHeadersText = ref('{}')
+const formVisible = ref(false)
+const editingId = ref<string | null>(null)
+
+function resetForm() {
+  form.name = ''
+  form.transport_type = 'stdio'
+  form.stdio = { command: '', args: [] as string[], cwd: '' }
+  form.http = { url: '', headers: {}, timeout: 30 }
+  stdioArgsText.value = ''
+  httpHeadersText.value = '{}'
+  editingId.value = null
+  formVisible.value = false
+}
+
+function showAddForm() {
+  resetForm()
+  formVisible.value = true
+}
 
 async function saveAndConnect() {
   const cfg = await buildAndSave()
@@ -145,7 +170,13 @@ async function buildAndSave() {
     }
   }
   try {
-    const cfg = await connStore.createConnection(data)
+    let cfg
+    if (editingId.value) {
+      cfg = await connStore.updateConnection(editingId.value, data)
+    } else {
+      cfg = await connStore.createConnection(data)
+    }
+    resetForm()
     ElMessage.success('已保存')
     return cfg
   } catch {}
@@ -163,6 +194,9 @@ async function deleteConnection(id: string) {
 }
 
 function editConnection(cfg: ServerConfig) {
+  resetForm()
+  formVisible.value = true
+  editingId.value = cfg.id
   form.name = cfg.name
   form.transport_type = cfg.transport_type
   if (cfg.stdio_config) {
@@ -189,6 +223,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .section-title {
   font-size: 15px;
   font-weight: 600;
