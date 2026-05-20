@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+dist/
+build/
+.ruff_cache/
+.pytest_cache/
+data/history/*.json
+.pids
+*.log
+node_modules/
+IMPLEMENTATION.md

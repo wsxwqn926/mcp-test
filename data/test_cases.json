@@ -1,0 +1,76 @@
+[
+  {
+    "id": "tc-camera-001",
+    "name": "get_camera 基础测试",
+    "description": "验证 get_camera 工具的基本调用和响应",
+    "server_config_id": null,
+    "steps": [
+      {
+        "id": "step-1",
+        "type": "tool_call",
+        "name": "调用 get_camera",
+        "tool_name": "get_camera",
+        "arguments": {"building": "A栋", "floor": "1F", "area": "大厅"},
+        "resource_uri": null,
+        "prompt_name": null,
+        "prompt_arguments": null,
+        "assertion": null,
+        "wait_seconds": null
+      },
+      {
+        "id": "step-2",
+        "type": "assertion",
+        "name": "验证调用成功",
+        "tool_name": null,
+        "arguments": null,
+        "resource_uri": null,
+        "prompt_name": null,
+        "prompt_arguments": null,
+        "assertion": {
+          "type": "status_success",
+          "expected": null,
+          "path": null,
+          "negate": false
+        },
+        "wait_seconds": null
+      },
+      {
+        "id": "step-3",
+        "type": "assertion",
+        "name": "验证内容非空",
+        "tool_name": null,
+        "arguments": null,
+        "resource_uri": null,
+        "prompt_name": null,
+        "prompt_arguments": null,
+        "assertion": {
+          "type": "content_not_empty",
+          "expected": null,
+          "path": null,
+          "negate": false
+        },
+        "wait_seconds": null
+      },
+      {
+        "id": "step-4",
+        "type": "assertion",
+        "name": "验证响应时间 < 5s",
+        "tool_name": null,
+        "arguments": null,
+        "resource_uri": null,
+        "prompt_name": null,
+        "prompt_arguments": null,
+        "assertion": {
+          "type": "response_time_lt",
+          "expected": 5000,
+          "path": null,
+          "negate": false
+        },
+        "wait_seconds": null
+      }
+    ],
+    "tags": ["smoke", "camera"],
+    "created_at": "2026-05-18T14:20:00.000000",
+    "updated_at": "2026-05-18T14:20:00.000000"
+  }
+]

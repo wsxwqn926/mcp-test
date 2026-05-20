@@ -1,0 +1,43 @@
+{
+  "id": "sample-tool-basic",
+  "name": "工具基础调用测试",
+  "description": "测试工具列表获取和基本调用流程",
+  "server_config_id": "",
+  "steps": [
+    {
+      "id": "step-1",
+      "type": "tool_call",
+      "name": "获取工具列表",
+      "tool_name": "list_tools",
+      "arguments": {}
+    },
+    {
+      "id": "step-2",
+      "type": "assertion",
+      "name": "验证调用成功",
+      "assertion": {
+        "type": "status_success"
+      }
+    },
+    {
+      "id": "step-3",
+      "type": "assertion",
+      "name": "验证响应非空",
+      "assertion": {
+        "type": "content_not_empty"
+      }
+    },
+    {
+      "id": "step-4",
+      "type": "assertion",
+      "name": "验证响应时间",
+      "assertion": {
+        "type": "response_time_lt",
+        "expected": 10000
+      }
+    }
+  ],
+  "tags": ["sample", "basic"],
+  "created_at": "2025-01-01T00:00:00",
+  "updated_at": "2025-01-01T00:00:00"
+}

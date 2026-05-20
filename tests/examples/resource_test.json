@@ -1,0 +1,31 @@
+{
+  "id": "sample-resource",
+  "name": "资源读取测试",
+  "description": "测试资源列表获取和读取流程",
+  "server_config_id": "",
+  "steps": [
+    {
+      "id": "step-1",
+      "type": "resource_read",
+      "name": "读取资源",
+      "resource_uri": "test://resource"
+    },
+    {
+      "id": "step-2",
+      "type": "assertion",
+      "name": "验证读取成功",
+      "assertion": {
+        "type": "status_success"
+      }
+    },
+    {
+      "id": "step-3",
+      "type": "wait",
+      "name": "等待1秒",
+      "wait_seconds": 1
+    }
+  ],
+  "tags": ["sample", "resource"],
+  "created_at": "2025-01-01T00:00:00",
+  "updated_at": "2025-01-01T00:00:00"
+}

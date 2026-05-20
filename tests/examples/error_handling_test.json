@@ -1,0 +1,43 @@
+{
+  "id": "sample-error-handling",
+  "name": "错误处理测试",
+  "description": "验证服务器对无效请求的错误处理",
+  "server_config_id": "",
+  "steps": [
+    {
+      "id": "step-1",
+      "type": "tool_call",
+      "name": "调用不存在的工具",
+      "tool_name": "nonexistent_tool_xyz",
+      "arguments": {}
+    },
+    {
+      "id": "step-2",
+      "type": "assertion",
+      "name": "验证返回错误",
+      "assertion": {
+        "type": "status_success",
+        "negate": true
+      }
+    },
+    {
+      "id": "step-3",
+      "type": "tool_call",
+      "name": "调用工具-空参数",
+      "tool_name": "",
+      "arguments": {}
+    },
+    {
+      "id": "step-4",
+      "type": "assertion",
+      "name": "验证返回错误",
+      "assertion": {
+        "type": "status_success",
+        "negate": true
+      }
+    }
+  ],
+  "tags": ["sample", "error-handling"],
+  "created_at": "2025-01-01T00:00:00",
+  "updated_at": "2025-01-01T00:00:00"
+}
