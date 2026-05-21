@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useConnectionStore } from '../stores/connection'
 import { useWebSocket } from '../composables/useWebSocket'
@@ -175,6 +175,12 @@ onMounted(async () => {
   await connStore.loadConfigs()
   await connStore.refreshStatus()
   const cfg = connStore.status.config
+  if (cfg) {
+    selectedConfigId.value = cfg.id
+  }
+})
+
+watch(() => connStore.connectedConfig, (cfg) => {
   if (cfg) {
     selectedConfigId.value = cfg.id
   }
