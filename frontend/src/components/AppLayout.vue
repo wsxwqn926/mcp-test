@@ -2,7 +2,7 @@
   <el-container class="app-layout">
     <el-aside width="220px" class="sidebar">
       <div class="sidebar-header">
-        <h3>MCP Test</h3>
+        <h3>MCP 调试工具</h3>
         <NotificationPanel />
       </div>
       <div class="sidebar-connection">
