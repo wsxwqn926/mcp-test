@@ -82,6 +82,7 @@
           连接
         </el-button>
         <el-button size="small" text @click="editConnection(cfg)">编辑</el-button>
+        <el-button size="small" text @click="saveAsConnection(cfg)">另存为</el-button>
         <el-button size="small" text type="danger" @click="deleteConnection(cfg.id)">删除</el-button>
       </div>
     </div>
@@ -198,6 +199,23 @@ function editConnection(cfg: ServerConfig) {
   formVisible.value = true
   editingId.value = cfg.id
   form.name = cfg.name
+  form.transport_type = cfg.transport_type
+  if (cfg.stdio_config) {
+    form.stdio.command = cfg.stdio_config.command
+    stdioArgsText.value = (cfg.stdio_config.args || []).join(' ')
+    form.stdio.cwd = cfg.stdio_config.cwd || ''
+  }
+  if (cfg.http_config) {
+    form.http.url = cfg.http_config.url
+    httpHeadersText.value = JSON.stringify(cfg.http_config.headers || {}, null, 2)
+    form.http.timeout = cfg.http_config.timeout || 30
+  }
+}
+
+function saveAsConnection(cfg: ServerConfig) {
+  resetForm()
+  formVisible.value = true
+  form.name = cfg.name + ' (副本)'
   form.transport_type = cfg.transport_type
   if (cfg.stdio_config) {
     form.stdio.command = cfg.stdio_config.command
