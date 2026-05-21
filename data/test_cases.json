@@ -10,7 +10,11 @@
         "type": "tool_call",
         "name": "调用 get_camera",
         "tool_name": "get_camera",
-        "arguments": {"building": "A栋", "floor": "1F", "area": "大厅"},
+        "arguments": {
+          "building": "A栋",
+          "floor": "1F",
+          "area": "大厅"
+        },
         "resource_uri": null,
         "prompt_name": null,
         "prompt_arguments": null,
@@ -69,8 +73,34 @@
         "wait_seconds": null
       }
     ],
-    "tags": ["smoke", "camera"],
-    "created_at": "2026-05-18T14:20:00.000000",
-    "updated_at": "2026-05-18T14:20:00.000000"
+    "tags": [
+      "smoke",
+      "camera"
+    ],
+    "created_at": "2026-05-18T14:20:00",
+    "updated_at": "2026-05-18T14:20:00"
+  },
+  {
+    "id": "f238c6e2-eb72-4ae4-94a6-2eafbe956f48",
+    "name": "获取动作列表",
+    "description": "获取动作列表",
+    "server_config_id": "",
+    "steps": [
+      {
+        "id": "step-1779331959998-1ok0",
+        "type": "tool_call",
+        "name": "",
+        "tool_name": "get-action-list",
+        "arguments": {},
+        "resource_uri": null,
+        "prompt_name": null,
+        "prompt_arguments": null,
+        "assertion": null,
+        "wait_seconds": null
+      }
+    ],
+    "tags": [],
+    "created_at": "2026-05-21T10:53:31.541096",
+    "updated_at": "2026-05-21T10:53:31.541096"
   }
 ]

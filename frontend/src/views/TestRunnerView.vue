@@ -99,7 +99,9 @@
         </el-col>
         <el-col :span="16">
           <template v-if="step.type === 'tool_call'">
-            <el-input v-model="step.tool_name" placeholder="工具名称" size="small" />
+            <el-select v-model="step.tool_name" placeholder="选择工具" size="small" filterable style="width: 100%">
+              <el-option v-for="t in toolStore.tools" :key="t.name" :label="t.name" :value="t.name" />
+            </el-select>
             <el-input v-model="step.arguments_json" placeholder='{"key":"value"}' size="small" style="margin-top: 4px" />
           </template>
           <template v-else-if="step.type === 'resource_read'">
@@ -149,10 +151,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useTestStore } from '../stores/tests'
 import { useConnectionStore } from '../stores/connection'
+import { useToolStore } from '../stores/tools'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const testStore = useTestStore()
 const connStore = useConnectionStore()
+const toolStore = useToolStore()
 
 const runningId = ref('')
 const editorVisible = ref(false)
@@ -217,6 +221,7 @@ function showNewTestDialog() {
   editingId.value = ''
   editForm.value = { name: '', description: '', tags: [], steps: [] }
   editorVisible.value = true
+  if (connStore.isConnected) toolStore.loadTools()
 }
 
 function editTest(tc: any) {
@@ -240,6 +245,7 @@ function editTest(tc: any) {
     })),
   }
   editorVisible.value = true
+  if (connStore.isConnected) toolStore.loadTools()
 }
 
 async function saveTestCase() {
