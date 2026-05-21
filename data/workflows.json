@@ -1,0 +1,279 @@
+[
+  {
+    "id": "5371d28025e7435f83a35ff3cad8e692",
+    "name": "001",
+    "description": null,
+    "nodes": [
+      {
+        "id": "node-1779334851616-start",
+        "type": "start",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      },
+      {
+        "id": "node-1779334851616-end",
+        "type": "end",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-1779334851616",
+        "source": "node-1779334851616-start",
+        "target": "node-1779334851616-end",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      }
+    ],
+    "variables": {},
+    "tags": [],
+    "created_at": "2026-05-21T11:40:51.620235",
+    "updated_at": "2026-05-21T11:40:51.620235"
+  },
+  {
+    "id": "ab2bbc77623f44a6b4edcacf324d7c38",
+    "name": "空间域测试流程",
+    "description": null,
+    "nodes": [
+      {
+        "id": "node-1779334979152-start",
+        "type": "start",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      },
+      {
+        "id": "node-1779334979152-end",
+        "type": "end",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-1779334979152",
+        "source": "node-1779334979152-start",
+        "target": "node-1779334979152-end",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      }
+    ],
+    "variables": {},
+    "tags": [],
+    "created_at": "2026-05-21T11:42:59.155218",
+    "updated_at": "2026-05-21T11:42:59.155218"
+  },
+  {
+    "id": "3e98ea5cc0f24a5680c9fc6a43976e5f",
+    "name": "新流程",
+    "description": null,
+    "nodes": [
+      {
+        "id": "node-1779335237123-start",
+        "type": "start",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      },
+      {
+        "id": "node-1779335237123-end",
+        "type": "end",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-1779335237123",
+        "source": "node-1779335237123-start",
+        "target": "node-1779335237123-end",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      }
+    ],
+    "variables": {},
+    "tags": [],
+    "created_at": "2026-05-21T11:47:17.126611",
+    "updated_at": "2026-05-21T11:47:17.126611"
+  },
+  {
+    "id": "4fba254e71b647c4a93ede4823fee53d",
+    "name": "拖拽测试",
+    "description": null,
+    "nodes": [
+      {
+        "id": "node-1779335373708-start",
+        "type": "start",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      },
+      {
+        "id": "node-1779335373708-end",
+        "type": "end",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "label": null,
+        "data": {}
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-1779335373708",
+        "source": "node-1779335373708-start",
+        "target": "node-1779335373708-end",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      }
+    ],
+    "variables": {},
+    "tags": [],
+    "created_at": "2026-05-21T11:49:33.711804",
+    "updated_at": "2026-05-21T11:49:33.711804"
+  },
+  {
+    "id": "b7a703a6cbe54818a2e269b3c793d0ae",
+    "name": "新流程001",
+    "description": null,
+    "nodes": [
+      {
+        "id": "node-1779335817863-start",
+        "type": "start",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "label": "",
+        "data": {
+          "_input_mappings": [
+            {
+              "variable_name": "areaId",
+              "value": "9"
+            }
+          ],
+          "_output_mappings": [
+            {
+              "source_path": "areaId",
+              "target_var": "areaId"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node-1779335817864-end",
+        "type": "end",
+        "position": {
+          "x": 766.6747898018456,
+          "y": 211.97576972188594
+        },
+        "label": null,
+        "data": {}
+      },
+      {
+        "id": "tool_call_1779337690701",
+        "type": "tool_call",
+        "position": {
+          "x": 312.2872028096495,
+          "y": 197.37955598181358
+        },
+        "label": "调用工具",
+        "data": {
+          "config_id": "341a4150-c25c-47cd-a8f6-87b3f55e0f02",
+          "tool_name": "list_apis",
+          "arguments": {},
+          "_output_mappings": [
+            {
+              "source_path": "response.content[0].text[1].apiCode",
+              "target_var": "apiCode"
+            }
+          ]
+        }
+      },
+      {
+        "id": "tool_call_1779345808643",
+        "type": "tool_call",
+        "position": {
+          "x": 542.0408090677404,
+          "y": 205.29664699980475
+        },
+        "label": "调用工具",
+        "data": {
+          "config_id": "341a4150-c25c-47cd-a8f6-87b3f55e0f02",
+          "tool_name": "invoke_api",
+          "arguments": {
+            "apiCode": "${apiCode}",
+            "params": "{\"areaId\": ${areaId}}"
+          },
+          "_input_mappings": [
+            {
+              "source_var": "apiCode",
+              "target_param": "apiCode"
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-node-1779335817863-start-tool_call_1779337690701-1779345744010",
+        "source": "node-1779335817863-start",
+        "target": "tool_call_1779337690701",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      },
+      {
+        "id": "e-tool_call_1779337690701-tool_call_1779345808643-1779345817451",
+        "source": "tool_call_1779337690701",
+        "target": "tool_call_1779345808643",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      },
+      {
+        "id": "e-tool_call_1779345808643-node-1779335817864-end-1779345823417",
+        "source": "tool_call_1779345808643",
+        "target": "node-1779335817864-end",
+        "source_handle": null,
+        "label": null,
+        "data": null
+      }
+    ],
+    "variables": {},
+    "tags": [],
+    "created_at": "2026-05-21T11:56:57.867627",
+    "updated_at": "2026-05-21T15:58:53.825540"
+  }
+]

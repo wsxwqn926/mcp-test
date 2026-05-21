@@ -37,12 +37,31 @@ async def create_connection(body: dict):
 
 @router.get("/status")
 async def connection_status():
+    primary_id = app_state.primary_id
     mgr = app_state.connection_manager
-    return {
+    result = {
         "state": mgr.state.value if mgr else "disconnected",
         "config": app_state.current_config.model_dump(mode="json") if app_state.current_config else None,
         "server_info": mgr.get_server_info().model_dump(mode="json") if mgr and mgr.get_server_info() else None,
+        "primary_id": primary_id,
+        "connections": [],
     }
+    for cid, m in app_state.list_connections().items():
+        info = {
+            "id": cid,
+            "name": "",
+            "state": m.state.value,
+            "server_info": m.get_server_info().model_dump(mode="json") if m.get_server_info() else None,
+        }
+        if cid == primary_id and app_state.current_config:
+            info["name"] = app_state.current_config.name
+        else:
+            from ..utils.config import load_server_configs
+            configs = load_server_configs()
+            if cid in configs:
+                info["name"] = configs[cid].name
+        result["connections"].append(info)
+    return result
 
 
 @router.post("/disconnect")
@@ -54,21 +73,28 @@ async def disconnect():
     except Exception as e:
         raise HTTPException(500, f"Disconnect failed: {e}")
     finally:
-        app_state.connection_manager = None
-        app_state.current_config = None
+        pid = app_state.primary_id
+        if pid:
+            app_state.remove_connection(pid)
     return {"disconnected": True}
 
 
 @router.post("/{config_id}/connect")
-async def connect(config_id: str):
+async def connect(config_id: str, body: dict | None = None):
+    body = body or {}
     configs = load_server_configs()
     if config_id not in configs:
         raise HTTPException(404, "Connection not found")
 
-    if app_state.is_connected:
-        await app_state.connection_manager.disconnect()
+    existing = app_state.get_connection(config_id)
+    if existing and existing.is_connected():
+        return {
+            "connected": True,
+            "server_info": existing.get_server_info().model_dump(mode="json") if existing.get_server_info() else None,
+        }
 
     config = configs[config_id]
+    set_primary = body.get("set_primary", True)
     mgr = ConnectionManager(
         on_state_change=app_state.on_state_change,
         on_message=app_state.on_message,
@@ -79,8 +105,9 @@ async def connect(config_id: str):
     except Exception as e:
         raise HTTPException(500, _friendly_error(e))
 
-    app_state.connection_manager = mgr
-    app_state.current_config = config
+    app_state.add_connection(config_id, mgr, set_primary=set_primary)
+    if set_primary:
+        app_state.current_config = config
 
     return {
         "connected": True,
@@ -88,21 +115,32 @@ async def connect(config_id: str):
     }
 
 
+@router.post("/{config_id}/disconnect-connection")
+async def disconnect_one(config_id: str):
+    mgr = app_state.get_connection(config_id)
+    if not mgr:
+        return {"disconnected": True}
+    try:
+        await mgr.disconnect()
+    except Exception:
+        pass
+    app_state.remove_connection(config_id)
+    return {"disconnected": True}
+
+
+@router.put("/primary/{config_id}")
+async def set_primary(config_id: str):
+    mgr = app_state.get_connection(config_id)
+    if not mgr or not mgr.is_connected():
+        raise HTTPException(400, "Connection not active")
+    app_state.set_primary(config_id)
+    return {"primary_id": config_id}
+
+
 @router.get("/compare")
 async def compare_connections():
     result = {}
-    primary = {}
-    if app_state.is_connected and app_state.connection_manager:
-        wrapper = app_state.connection_manager.session_wrapper
-        if wrapper:
-            try:
-                tools = await wrapper.list_tools()
-                primary = {"tools": [{"name": t.name, "description": t.description} for t in tools]}
-            except Exception:
-                primary = {"tools": [], "error": "Failed to list tools"}
-    result["primary"] = {"config_id": app_state.current_config.id if app_state.current_config else None, **primary}
-
-    for cid, mgr in app_state._secondary.items():
+    for cid, mgr in app_state.list_connections().items():
         info = {}
         if mgr.session_wrapper:
             try:
@@ -110,7 +148,8 @@ async def compare_connections():
                 info = {"tools": [{"name": t.name, "description": t.description} for t in tools]}
             except Exception:
                 info = {"tools": [], "error": "Failed to list tools"}
-        result[cid] = {"config_id": cid, **info}
+        is_primary = cid == app_state.primary_id
+        result[cid] = {"config_id": cid, "primary": is_primary, **info}
     return result
 
 
@@ -137,34 +176,10 @@ async def delete_connection(config_id: str):
     configs = load_server_configs()
     if config_id not in configs:
         raise HTTPException(404, "Connection not found")
-    if app_state.is_connected and app_state.current_config and app_state.current_config.id == config_id:
-        await app_state.connection_manager.disconnect()
-        app_state.current_config = None
+    if app_state.get_connection(config_id):
+        app_state.remove_connection(config_id)
     delete_config(config_id)
     return {"deleted": True}
-
-
-@router.post("/{config_id}/connect-secondary")
-async def connect_secondary(config_id: str):
-    configs = load_server_configs()
-    if config_id not in configs:
-        raise HTTPException(404, "Connection not found")
-    if config_id in app_state.list_secondary():
-        raise HTTPException(400, "Already connected as secondary")
-    config = configs[config_id]
-    mgr = ConnectionManager()
-    try:
-        await mgr.connect(config)
-    except Exception as e:
-        raise HTTPException(500, _friendly_error(e))
-    app_state.add_secondary(config_id, mgr)
-    return {"connected": True, "server_info": mgr.get_server_info().model_dump(mode="json") if mgr.get_server_info() else None}
-
-
-@router.post("/{config_id}/disconnect-secondary")
-async def disconnect_secondary(config_id: str):
-    app_state.remove_secondary(config_id)
-    return {"disconnected": True}
 
 
 def _build_config(body: dict, config_id: str | None = None) -> ServerConfig:

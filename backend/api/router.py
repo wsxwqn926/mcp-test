@@ -8,6 +8,7 @@ from .messages import router as messages_router
 from .tests import router as tests_router
 from .validator import router as validator_router
 from .performance import router as performance_router
+from .workflows import router as workflows_router
 
 api_router = APIRouter()
 
@@ -19,3 +20,4 @@ api_router.include_router(messages_router, prefix="/messages", tags=["messages"]
 api_router.include_router(tests_router, prefix="/tests", tags=["tests"])
 api_router.include_router(validator_router, prefix="/validator", tags=["validator"])
 api_router.include_router(performance_router, prefix="/performance", tags=["performance"])
+api_router.include_router(workflows_router, prefix="/workflows", tags=["workflows"])

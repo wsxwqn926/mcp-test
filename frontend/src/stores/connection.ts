@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { connectionsApi, type ServerConfig, type ConnectionStatus } from '../api/connections'
+import { connectionsApi, type ServerConfig, type ConnectionStatus, type ConnectedServer } from '../api/connections'
 import { ElMessage } from 'element-plus'
 
 export const useConnectionStore = defineStore('connection', () => {
@@ -9,11 +9,15 @@ export const useConnectionStore = defineStore('connection', () => {
     state: 'disconnected',
     config: null,
     server_info: null,
+    primary_id: null,
+    connections: [],
   })
 
   const isConnected = computed(() => status.value.state === 'connected')
   const connectedConfig = computed(() => status.value.config)
   const serverInfo = computed(() => status.value.server_info)
+  const connectedServers = computed(() => status.value.connections)
+  const primaryId = computed(() => status.value.primary_id)
 
   async function loadConfigs() {
     const res = await connectionsApi.list()
@@ -37,8 +41,8 @@ export const useConnectionStore = defineStore('connection', () => {
     delete configs.value[id]
   }
 
-  async function connect(id: string) {
-    const res = await connectionsApi.connect(id)
+  async function connect(id: string, setPrimary = true) {
+    const res = await connectionsApi.connect(id, { set_primary: setPrimary })
     await refreshStatus()
     ElMessage.success('已连接')
     return res
@@ -48,6 +52,17 @@ export const useConnectionStore = defineStore('connection', () => {
     await connectionsApi.disconnect()
     await refreshStatus()
     ElMessage.success('已断开')
+  }
+
+  async function disconnectOne(id: string) {
+    await connectionsApi.disconnectOne(id)
+    await refreshStatus()
+    ElMessage.success('已断开')
+  }
+
+  async function setPrimary(id: string) {
+    await connectionsApi.setPrimary(id)
+    await refreshStatus()
   }
 
   async function refreshStatus() {
@@ -61,19 +76,28 @@ export const useConnectionStore = defineStore('connection', () => {
     }
   }
 
+  function updateConnectionsFromWs(connections: ConnectedServer[]) {
+    status.value = { ...status.value, connections }
+  }
+
   return {
     configs,
     status,
     isConnected,
     connectedConfig,
     serverInfo,
+    connectedServers,
+    primaryId,
     loadConfigs,
     createConnection,
     updateConnection,
     deleteConnection,
     connect,
     disconnect,
+    disconnectOne,
+    setPrimary,
     refreshStatus,
     updateStateFromWs,
+    updateConnectionsFromWs,
   }
 })

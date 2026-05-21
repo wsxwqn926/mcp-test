@@ -8,6 +8,7 @@ export interface Notification {
   message?: string
   timestamp: string
   data?: any
+  read?: boolean
 }
 
 export const useNotificationStore = defineStore('notification', () => {

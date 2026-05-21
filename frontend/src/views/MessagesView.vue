@@ -145,7 +145,12 @@ function directionColor(d: string) {
 }
 
 function formatTime(ts: string) {
-  return new Date(ts).toLocaleTimeString('zh-CN', { hour12: false, fractionalSecondDigits: 3 })
+  const d = new Date(ts)
+  const h = String(d.getHours()).padStart(2, '0')
+  const m = String(d.getMinutes()).padStart(2, '0')
+  const s = String(d.getSeconds()).padStart(2, '0')
+  const ms = String(d.getMilliseconds()).padStart(3, '0')
+  return `${h}:${m}:${s}.${ms}`
 }
 
 function formatSize(bytes: number) {

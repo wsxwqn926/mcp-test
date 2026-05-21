@@ -7,14 +7,20 @@ export const useToolStore = defineStore('tools', () => {
   const selectedTool = ref<string>('')
   const callResult = ref<ToolCallResult | null>(null)
   const callHistory = ref<Record<string, ToolCallHistory[]>>({})
+  const allTools = ref<Record<string, { tools: ToolInfo[]; error?: string }>>({})
 
-  async function loadTools(forceRefresh = false) {
-    const res = await toolsApi.list(forceRefresh)
+  async function loadTools(forceRefresh = false, configId?: string) {
+    const res = await toolsApi.list(forceRefresh, configId)
     tools.value = res.tools
   }
 
-  async function callTool(name: string, args?: any) {
-    const res = await toolsApi.call(name, args)
+  async function loadAllTools(forceRefresh = false) {
+    const res = await toolsApi.listAll(forceRefresh)
+    allTools.value = res
+  }
+
+  async function callTool(name: string, args?: any, configId?: string) {
+    const res = await toolsApi.call(name, args, configId)
     callResult.value = res
     await loadHistory(name)
     return res
@@ -30,6 +36,7 @@ export const useToolStore = defineStore('tools', () => {
     selectedTool.value = ''
     callResult.value = null
     callHistory.value = {}
+    allTools.value = {}
   }
 
   return {
@@ -37,7 +44,9 @@ export const useToolStore = defineStore('tools', () => {
     selectedTool,
     callResult,
     callHistory,
+    allTools,
     loadTools,
+    loadAllTools,
     callTool,
     loadHistory,
     clear,

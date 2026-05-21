@@ -15,21 +15,51 @@ class AppState:
         self.current_config: ServerConfig | None = None
         self._ws_connections: list[WebSocket] = []
         self._loop: asyncio.AbstractEventLoop | None = None
-        self._secondary: dict[str, ConnectionManager] = {}
+        self._connections: dict[str, ConnectionManager] = {}
+        self._primary_id: str | None = None
+        self._last_workflow_results: dict = {}
+        self._active_runner = None
 
-    def add_secondary(self, config_id: str, mgr: ConnectionManager):
-        self._secondary[config_id] = mgr
+    @property
+    def primary_id(self) -> str | None:
+        return self._primary_id
 
-    def remove_secondary(self, config_id: str):
-        mgr = self._secondary.pop(config_id, None)
+    def add_connection(self, config_id: str, mgr: ConnectionManager, set_primary: bool = True):
+        self._connections[config_id] = mgr
+        if set_primary:
+            self._primary_id = config_id
+            self.connection_manager = mgr
+
+    def remove_connection(self, config_id: str):
+        mgr = self._connections.pop(config_id, None)
+        if config_id == self._primary_id:
+            self._primary_id = None
+            self.connection_manager = None
+            self.current_config = None
+            if self._connections:
+                fallback_id = next(iter(self._connections))
+                self._primary_id = fallback_id
+                self.connection_manager = self._connections[fallback_id]
         if mgr and mgr.is_connected() and self._loop:
             asyncio.run_coroutine_threadsafe(mgr.disconnect(), self._loop)
 
-    def get_secondary(self, config_id: str) -> ConnectionManager | None:
-        return self._secondary.get(config_id)
+    def get_connection(self, config_id: str) -> ConnectionManager | None:
+        if config_id == self._primary_id and self.connection_manager:
+            return self.connection_manager
+        return self._connections.get(config_id)
 
-    def list_secondary(self) -> list[str]:
-        return list(self._secondary.keys())
+    def list_connections(self) -> dict[str, ConnectionManager]:
+        return dict(self._connections)
+
+    def set_primary(self, config_id: str):
+        mgr = self._connections.get(config_id)
+        if not mgr:
+            return
+        self._primary_id = config_id
+        self.connection_manager = mgr
+        from ..utils.config import load_server_configs
+        configs = load_server_configs()
+        self.current_config = configs.get(config_id)
 
     def set_loop(self, loop: asyncio.AbstractEventLoop):
         self._loop = loop

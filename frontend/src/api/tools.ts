@@ -21,12 +21,14 @@ export interface ToolCallHistory {
 }
 
 export const toolsApi = {
-  list: (forceRefresh = false) =>
-    http.get<any, { tools: ToolInfo[] }>('/api/tools', { params: { force_refresh: forceRefresh } }),
-  get: (name: string) =>
-    http.get<any, ToolInfo & { form_fields: any[] }>(`/api/tools/${name}`),
-  call: (name: string, arguments_?: any) =>
-    http.post<any, ToolCallResult>(`/api/tools/${name}/call`, { arguments: arguments_ }),
+  list: (forceRefresh = false, configId?: string) =>
+    http.get<any, { tools: ToolInfo[] }>('/api/tools', { params: { force_refresh: forceRefresh, config_id: configId } }),
+  listAll: (forceRefresh = false) =>
+    http.get<any, Record<string, { tools: ToolInfo[]; error?: string }>>('/api/tools/all', { params: { force_refresh: forceRefresh } }),
+  get: (name: string, configId?: string) =>
+    http.get<any, ToolInfo & { form_fields: any[] }>(`/api/tools/${name}`, { params: { config_id: configId } }),
+  call: (name: string, arguments_?: any, configId?: string) =>
+    http.post<any, ToolCallResult>(`/api/tools/${name}/call`, { arguments: arguments_, config_id: configId }),
   history: (name: string) =>
     http.get<any, { history: ToolCallHistory[] }>(`/api/tools/${name}/history`),
 }

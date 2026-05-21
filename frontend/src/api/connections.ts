@@ -10,6 +10,18 @@ export interface ServerConfig {
   updated_at: string
 }
 
+export interface ConnectedServer {
+  id: string
+  name: string
+  state: string
+  server_info: {
+    name: string
+    version: string
+    protocol_version: string
+    capabilities: Record<string, any>
+  } | null
+}
+
 export interface ConnectionStatus {
   state: string
   config: ServerConfig | null
@@ -19,6 +31,8 @@ export interface ConnectionStatus {
     protocol_version: string
     capabilities: Record<string, any>
   } | null
+  primary_id: string | null
+  connections: ConnectedServer[]
 }
 
 export const connectionsApi = {
@@ -27,10 +41,10 @@ export const connectionsApi = {
   get: (id: string) => http.get<any, ServerConfig>(`/api/connections/${id}`),
   update: (id: string, data: any) => http.put<any, ServerConfig>(`/api/connections/${id}`, data),
   delete: (id: string) => http.delete(`/api/connections/${id}`),
-  connect: (id: string) => http.post<any, { connected: boolean; server_info: any }>(`/api/connections/${id}/connect`),
+  connect: (id: string, data?: { set_primary?: boolean }) => http.post<any, { connected: boolean; server_info: any }>(`/api/connections/${id}/connect`, data || {}),
   disconnect: () => http.post('/api/connections/disconnect'),
+  disconnectOne: (id: string) => http.post(`/api/connections/${id}/disconnect-connection`),
+  setPrimary: (id: string) => http.put(`/api/connections/primary/${id}`),
   status: () => http.get<any, ConnectionStatus>('/api/connections/status'),
-  connectSecondary: (id: string) => http.post<any, { connected: boolean; server_info: any }>(`/api/connections/${id}/connect-secondary`),
-  disconnectSecondary: (id: string) => http.post(`/api/connections/${id}/disconnect-secondary`),
   compare: () => http.get<any, Record<string, any>>('/api/connections/compare'),
 }

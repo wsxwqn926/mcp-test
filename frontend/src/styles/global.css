@@ -133,3 +133,22 @@ html, body, #app {
 .action-bar .spacer {
   flex: 1;
 }
+
+.node-running {
+  animation: node-pulse 1.5s infinite !important;
+}
+.node-passed { border-color: #67c23a !important; box-shadow: 0 0 8px rgba(103, 194, 58, 0.3) !important; }
+.node-failed { border-color: #f56c6c !important; box-shadow: 0 0 8px rgba(245, 108, 108, 0.3) !important; }
+.node-error { animation: node-shake 0.5s !important; border-color: #f56c6c !important; }
+.node-skipped { opacity: 0.5 !important; border-style: dashed !important; }
+
+@keyframes node-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(64, 158, 255, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(64, 158, 255, 0.6); }
+}
+
+@keyframes node-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}

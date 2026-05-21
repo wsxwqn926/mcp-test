@@ -90,7 +90,7 @@ async function addSecondary() {
   if (!selectedSecondary.value) return
   connecting.value = true
   try {
-    await connectionsApi.connectSecondary(selectedSecondary.value)
+    await connectionsApi.connect(selectedSecondary.value, { set_primary: false })
     const cfg = connStore.configs[selectedSecondary.value]
     secondaries.value.push({ id: cfg.id, name: cfg.name, transport: cfg.transport_type.toUpperCase() })
     ElMessage.success(`已添加副连接: ${cfg.name}`)
@@ -102,7 +102,7 @@ async function addSecondary() {
 }
 
 async function removeSecondary(id: string) {
-  await connectionsApi.disconnectSecondary(id)
+  await connectionsApi.disconnectOne(id)
   secondaries.value = secondaries.value.filter(s => s.id !== id)
   ElMessage.success('已断开副连接')
   await loadCompare()

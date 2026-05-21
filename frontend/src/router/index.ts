@@ -10,6 +10,7 @@ const router = createRouter({
     { path: '/prompts', name: 'prompts', component: () => import('../views/PromptsView.vue') },
     { path: '/messages', name: 'messages', component: () => import('../views/MessagesView.vue') },
     { path: '/tests', name: 'tests', component: () => import('../views/TestRunnerView.vue') },
+    { path: '/workflows', name: 'workflows', component: () => import('../views/WorkflowView.vue') },
     { path: '/validator', name: 'validator', component: () => import('../views/ValidatorView.vue') },
     { path: '/performance', name: 'performance', component: () => import('../views/PerformanceView.vue') },
     { path: '/compare', name: 'compare', component: () => import('../views/CompareView.vue') },

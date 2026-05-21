@@ -66,6 +66,16 @@ export function useWebSocket() {
       case 'server_notification':
         useNotificationStore().addFromWs(msg.data)
         break
+      case 'workflow_node_status':
+        import('../stores/workflow').then(m => {
+          m.useWorkflowStore().updateNodeStatus(msg.data)
+        })
+        break
+      case 'workflow_run_complete':
+        import('../stores/workflow').then(m => {
+          m.useWorkflowStore().setRunComplete(msg.data)
+        })
+        break
     }
   }
 
